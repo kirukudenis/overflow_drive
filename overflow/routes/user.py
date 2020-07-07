@@ -1,23 +1,37 @@
 from overflow import app, jwt
 from flask import jsonify, request
 from flask_jwt_extended import jwt_required, create_access_token, get_jwt_identity
+from ..others.user import signup,login
+from ..others.utils import get
 
 
 @app.route('/user/login')
-def hello_world():
-    if not request.is_json:
-        return jsonify({"msg": "Missing JSON in request"}), 400
+def user_login_():
+    param = get("param")
+    password = get("password")
 
-    username = request.json.get('username', None)
-    password = request.json.get('password', None)
-    if not username:
-        return jsonify({"msg": "Missing username parameter"}), 400
+    if not param:
+        return jsonify({"msg": "Missing username/Email/Phone parameter"}), 400
     if not password:
         return jsonify({"msg": "Missing password parameter"}), 400
 
-    if username != 'test' or password != 'test':
+    try:
+        final = login(param,password)
+        # Identity can be any data that is json serializable
+        access_token = create_access_token(identity=param)
+    except Exception as e:
+        print(e)
         return jsonify({"msg": "Bad username or password"}), 401
-
-    # Identity can be any data that is json serializable
-    access_token = create_access_token(identity=username)
     return jsonify(access_token=access_token), 200
+
+
+@app.route("/user/signup",methods=["POST"])
+def signup_():
+    firstname = get("username")
+    lastname = get("lastname")
+    email = get("email")
+    phone = get("phone")
+    type_ = get("type")
+    password = get("password")
+
+    return signup(firstname,lastname,email,phone,type_,password)
