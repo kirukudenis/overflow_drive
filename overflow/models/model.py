@@ -1,14 +1,14 @@
 from overflow import ma, db, migrate
 import secrets
-from overflow.models.user import User,UserSchema
 
 class User(db.Model):
+    id  = db.Column(db.Integer, primary_key  = True,nullable=False)
     firstname = db.Column(db.String(100), primary_key=True, nullable=False)
     lastname = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(length=255), nullable=True)
     phone = db.Column(db.Integer, nullable=False, unique=True)
     password = db.Column(db.String(length=255), nullable=True)
-    type = db.COlumn(db.Integer,nullable=False, default=0)
+    type = db.Column(db.Integer,nullable=False, default=0)
     active = db.Column(db.Boolean)
 
     def __init__(self, firstname, lastname, email, phone,type, password):
@@ -22,13 +22,13 @@ class User(db.Model):
 
 class UserSchema(ma.Schema):
     class Meta:
-        fields = ("ffirtsname","lastname", "email", "phone","type", "password")
+        fields = ("firtsname","lastname", "email", "phone","type", "password")
 
 
 
 class Car(db.Model):
     id = db.Column(db.Integer, primary_key=True, nullable=False)
-    plate_number = db.Column(db.String(100), nullable=False,unique=true)
+    plate_number = db.Column(db.String(100), nullable=False,unique=True)
     fleet_id = db.Column(db.ForeignKey("fleet.id"), nullable=True)
     active = db.Column(db.Boolean)
     owner = db.Column(db.ForeignKey("user.id"))
@@ -38,7 +38,6 @@ class Car(db.Model):
         self.plate_number = plate_number
         self.active = active
         self.owner = owner
-
 
 class CarSchema(ma.Schema):
     class Meta:
@@ -57,12 +56,12 @@ class Fleet(db.Model):
 
 class FleetSchema(ma.Schema):
     class Meta:
-        fields = (name,route)
+        fields = ("name","route")
 
 
-class Route(db.model):
+class Route(db.Model):
     id = db.Column(db.Integer, primary_key=True,nullable=False)
-    name = db.Column(String(length=255),nullable=False,unique=True)
+    name = db.Column(db.String(length=255),nullable=False,unique=True)
     departure = db.Column(db.ForeignKey("stage.id"), nullable=False)
     destination = db.Column(db.ForeignKey("stage.id"), nullable=False)
     fare = db.Column(db.Integer, nullable=False, default=0)
@@ -80,7 +79,7 @@ class RouteSchema(ma.Schema):
 
 class Stage(db.Model):
     id = db.Column(db.Integer, primary_key=True, nullable=False)
-    name = db.Column(String(length=255), nullable=False, unique=True)
+    name = db.Column(db.String(length=255), nullable=False, unique=True)
 
     def __init__(self,name):
         self.name = name
