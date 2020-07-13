@@ -34,11 +34,11 @@ def signup(firstname, lastname, email, phone, type, password):
 
 def login(param, password):
     if validate_email(param):
-        # user loggin via username
+        # user login via username
         lookup = User.query.filter_by(email=param).first()
         user_data = user_schema.dump(lookup)
         if user_data:
-            final = user_data if check_password_hash(user_data["password"]) else None
+            final = user_data if check_password_hash(user_data["password"],password) else None
         else:
             raise Exception(error("User Does Not Exists"))
     elif verify_phone(param):
@@ -46,7 +46,7 @@ def login(param, password):
         lookup = User.query.filter_by(phone=param).first()
         user_data = user_schema.dump(lookup)
         if user_data:
-            final = user_data if check_password_hash(user_data["password"]) else None
+            final = user_data if check_password_hash(user_data["password"],password) else None
         else:
             raise Exception(error("User Does Not Exists"))
     else:
@@ -54,10 +54,16 @@ def login(param, password):
         lookup = User.query.filter_by(email=param).first()
         user_data = user_schema.dump(lookup)
         if user_data:
-            final = user_data if check_password_hash(user_data["password"]) else None
+            final = user_data if check_password_hash(user_data["password"],password) else None
         else:
             raise Exception(error("User Does Not Exists"))
     return final
+
+
+def user_exists(param):
+    lookup = User.query.get(param) or User.query.filter_by(email=param).first() or User.query.filter_by(
+        username=param).first()
+    return users_schema.dump(lookup)
 
 
 def validate_email(email):

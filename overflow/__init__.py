@@ -28,4 +28,5 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
 from overflow.routes import user
-from overflow.models import user,car
+from overflow.models import user,car,payment
+
