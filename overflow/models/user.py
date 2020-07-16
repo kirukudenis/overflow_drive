@@ -14,7 +14,7 @@ class User(db.Model):
     type = db.Column(db.Integer, nullable=False, default=0)
     active = db.Column(db.Boolean)
 
-    def __init__(self,id,firstname, lastname, email, phone, type_, password):
+    def __init__(self, id, firstname, lastname, email, phone, type_, password):
         self.id = id
         self.firstname = firstname
         self.lastname = lastname

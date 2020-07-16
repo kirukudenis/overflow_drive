@@ -9,7 +9,7 @@ class Car(db.Model):
     fleet_id = db.Column(db.ForeignKey("fleet.id"), nullable=True)
     active = db.Column(db.Boolean)
     owner = db.Column(db.ForeignKey("user.id"))
-    in_service = db.Column(db.Boolean,default=True)
+    in_service = db.Column(db.Boolean, default=True)
 
     def __init__(self, plate_number, active, owner):
         self.plate_number = plate_number
@@ -19,7 +19,7 @@ class Car(db.Model):
 
 class CarSchema(ma.Schema):
     class Meta:
-        fields = ("id", "platenumber", "fleet_id", "active","in_service")
+        fields = ("id", "platenumber", "fleet_id", "active", "in_service")
 
 
 class Fleet(db.Model):
@@ -66,4 +66,23 @@ class Stage(db.Model):
 
 class StageSchema(ma.Schema):
     class Meta:
-        fieldd = ("id", "name")
+        fields = ("id", "name")
+
+
+class Group(db.Model):
+    id = db.Column(db.Integer,primary_key=True, nullable=False)
+    name = db.Column(db.String(length=255), nullable=False)
+    route = db.Column(db.ForeignKey("route.id"), nullable=False)
+    car = db.Column(db.ForeignKey("car.id"), nullable=False)
+    active = db.Column(db.Boolean, default=True)
+
+    def __init__(self, name, route, car, active=True):
+        self.name = name
+        self.route = route
+        self.car = car
+        self.active = active
+
+
+class GroupSchema(ma.Schema):
+    class Meta:
+        fields = ("id", "name", "route", "car", "active")

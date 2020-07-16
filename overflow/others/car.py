@@ -1,27 +1,19 @@
-from overflow.models.car import Fleet, FleetSchema, Car, CarSchema,User
-from overflow.others.user import user_schema,users_schema,verify_phone,validate_email
+from overflow.models.car import Fleet, FleetSchema, Car, CarSchema, User
+from overflow.others.user import user_schema, users_schema, verify_phone, validate_email
 from overflow import db
 from .utils import exc
+from .schema import car_schema
 
-# schemas
-# car
-car_schema = CarSchema()
-cars_schema = CarSchema(many=True)
-
-# fleet schema
-fleet_schema = FleetSchema()
-fleets_schema = FleetSchema(many=True)
 
 # functions
-def add_vahicle(plate_number, active, owner):
+def add_vehicle(plate_number, active, owner):
     lookup = Car(plate_number, active, owner)
     return car_schema.dump(lookup)
 
 
-def edit_ownner_email(user_id,email):
+def edit_owner_email(user_id, email):
     lookup = User.query.get(user_id)
-    user_data  = user_schema.dump(lookup)
-    if user_data :
+    if lookup:
         if validate_email(email):
             # email valid
             lookup.email = email
@@ -41,5 +33,10 @@ def car_exists(params):
 
 
 def delete_car(plate_number):
-
-    pass
+    lookup = Car.query.filter_by(plate_number=plate_number).first()
+    if lookup:
+        lookup.in_service = False
+        db.session.commit()
+        return car_schema.dump()
+    else:
+        exc("Error! Car Does Not Exists")
