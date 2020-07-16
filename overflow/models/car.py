@@ -9,6 +9,7 @@ class Car(db.Model):
     fleet_id = db.Column(db.ForeignKey("fleet.id"), nullable=True)
     active = db.Column(db.Boolean)
     owner = db.Column(db.ForeignKey("user.id"))
+    in_service = db.Column(db.Boolean,default=True)
 
     def __init__(self, plate_number, active, owner):
         self.plate_number = plate_number
@@ -18,7 +19,7 @@ class Car(db.Model):
 
 class CarSchema(ma.Schema):
     class Meta:
-        fields = ("id", "platenumber", "fleet_id", "active")
+        fields = ("id", "platenumber", "fleet_id", "active","in_service")
 
 
 class Fleet(db.Model):

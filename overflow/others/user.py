@@ -1,7 +1,13 @@
+from sqlalchemy.dialects import mysql
 from overflow.models.user import User, UserSchema
 from werkzeug.security import generate_password_hash, check_password_hash
 import re
 from overflow import db
+from flask_sqlalchemy import sqlalchemy
+import secrets
+import random
+from ..others.utils import error, success
+
 
 # adding the schame init
 user_schema = UserSchema()
@@ -19,10 +25,20 @@ def signup(firstname, lastname, email, phone, type, password):
     :return dict:
     """
     if verify_phone(phone):
-        password = generate_password_hash(password)
-        lookup = User(firstname, lastname, email, phone, int(type), password)
-        db.session.add(lookup)
-        db.session.commit()
+        try:
+            if not  phone_exists(phone):
+                password = generate_password_hash(password)
+                lookup = User(random.getrandbits(24),firstname, lastname, email, phone, int(type), password)
+                db.session.add(lookup)
+                db.session.commit()
+            else:
+                return {"msg":"User Phone Exists"}
+
+        except sqlalchemy.exc.DatabaseError as e:
+            return {"msg":str(e)}
+        except mysql.connector.errors.IntegrityError as e :
+            return {"msg" :str(e)}
+
         if user_schema.dump(lookup):
             final = success("user Added SuccessFully")
         else:
@@ -72,13 +88,6 @@ def validate_email(email):
     return re.match(regex, email)
 
 
-def error(message):
-    return {"status": False, "msg": message}
-
-
-def success(message):
-    return {"status": True, "msg": message}
-
 
 def verify_phone(number):
     """
@@ -87,3 +96,20 @@ def verify_phone(number):
     """
     regex = re.compile(r'^[+]*[(]?[0-9]{1,4}[)]?[-\s\./0-9]*$', re.IGNORECASE)
     return re.match(regex, number)
+
+
+def random_four():
+    rand = random.getrandbits(24)
+    numbers = str(rand)
+    final = [numbers[i:i+4] for i in range(0, len(numbers), 4)]
+    return final
+
+
+def phone_exists(phone):
+    lookup = User.query.filter_by(phone=phone).first()
+    return user_schema.dump(lookup)
+
+
+
+
+# def

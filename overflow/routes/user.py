@@ -27,11 +27,14 @@ def user_login_():
 
 @app.route("/user/signup",methods=["POST"])
 def signup_():
-    firstname = get("username")
-    lastname = get("lastname")
-    email = get("email")
-    phone = get("phone")
-    type_ = get("type")
-    password = get("password")
-
-    return signup(firstname,lastname,email,phone,type_,password)
+    try :
+        firstname = get("firstname")
+        lastname = get("lastname")
+        email = get("email")
+        phone = get("phone")
+        type_ = get("type")
+        password = get("password")
+    except KeyError as e:
+        print(str(e))
+        return jsonify({"msg":str(e)})
+    return jsonify(signup(firstname,lastname,email,phone,type_,password))
