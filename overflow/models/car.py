@@ -3,6 +3,25 @@ import secrets
 from .user import User
 
 
+class Route(db.Model):
+    id = db.Column(db.Integer, primary_key=True, nullable=False)
+    name = db.Column(db.String(length=255), nullable=False, unique=True)
+    departure = db.Column(db.ForeignKey("stage.id"), nullable=False)
+    destination = db.Column(db.ForeignKey("stage.id"), nullable=False)
+    fare = db.Column(db.Integer, nullable=False, default=0)
+
+    def __init__(self, name, deparute, destination, fare):
+        self.name = name
+        self.departure = deparute
+        self.destination = destination
+        self.fare = fare
+
+
+class RouteSchema(ma.Schema):
+    class Meta:
+        fields = ("id", "name", "departure", "destination", "fare")
+
+
 class Car(db.Model):
     id = db.Column(db.Integer, primary_key=True, nullable=False)
     plate_number = db.Column(db.String(100), nullable=False, unique=True)
@@ -10,11 +29,13 @@ class Car(db.Model):
     active = db.Column(db.Boolean)
     owner = db.Column(db.ForeignKey("user.id"))
     in_service = db.Column(db.Boolean, default=True)
+    route = db.Column(db.ForeignKey("route.id"), nullable=False)
 
-    def __init__(self, plate_number, active, owner):
+    def __init__(self, plate_number, active, owner, route):
         self.plate_number = plate_number
         self.active = active
         self.owner = owner
+        self.route = route
 
 
 class CarSchema(ma.Schema):
@@ -37,40 +58,23 @@ class FleetSchema(ma.Schema):
         fields = ("name", "route")
 
 
-class Route(db.Model):
-    id = db.Column(db.Integer, primary_key=True, nullable=False)
-    name = db.Column(db.String(length=255), nullable=False, unique=True)
-    departure = db.Column(db.ForeignKey("stage.id"), nullable=False)
-    destination = db.Column(db.ForeignKey("stage.id"), nullable=False)
-    fare = db.Column(db.Integer, nullable=False, default=0)
-
-    def __init__(self, name, deparute, destination, fare):
-        self.name = name
-        self.departure = deparute
-        self.destination = destination
-        self.fare = fare
-
-
-class RouteSchema(ma.Schema):
-    class Meta:
-        fields = ("id", "name", "departure", "destination", "fare")
-
-
 class Stage(db.Model):
     id = db.Column(db.Integer, primary_key=True, nullable=False)
     name = db.Column(db.String(length=255), nullable=False, unique=True)
+    route = db.Column(db.ForeignKey("route.id"), nullable=False)
 
-    def __init__(self, name):
+    def __init__(self, name, route):
         self.name = name
+        self.route = route
 
 
 class StageSchema(ma.Schema):
     class Meta:
-        fields = ("id", "name")
+        fields = ("id", "name", "route")
 
 
 class Group(db.Model):
-    id = db.Column(db.Integer,primary_key=True, nullable=False)
+    id = db.Column(db.Integer, primary_key=True, nullable=False)
     name = db.Column(db.String(length=255), nullable=False)
     route = db.Column(db.ForeignKey("route.id"), nullable=False)
     car = db.Column(db.ForeignKey("car.id"), nullable=False)
