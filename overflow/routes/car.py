@@ -5,30 +5,42 @@ from flask_jwt_extended import jwt_required, create_access_token, get_jwt_identi
 # get additional functions
 from overflow.others.user import user_exists
 from overflow.others.utils import get
+from overflow.others.car import (add_route,edit_fare,add_vehicle)
 
 
 @app.route("/vehicle/add", methods=["POST"])
 @jwt_required
 def add_car():
-    user_param = get("email")
+    user_param = get("param")
+    plate_number = get("plate_number")
+    active = get("active")
+    owner = get("owner")
+    
     if user_exists(user_param):
-        pass
+        add_vehicle(plate_number,active,owner)
     pass
 
 
 @app.route('/vehicle/edit', methods=["POST"])
 def edit_car():
+
     pass
 
 
 @app.route("/route/add", methods=["POST"])
 def add_route():
-    pass
+    name = get("name")
+    departure = get("departure")
+    destination = get("destination")
+    fare = get("fare")
+    return add_route(name,departure,destination,fare)
 
 
-@app.route("/route/add", methods=["POST"])
+@app.route("/route/fare/edit", methods=["POST"])
 def edit_route():
-    pass
+    name = get("name")
+    fare = get("fare")
+    return edit_fare(name,fare)
 
 
 @app.route("/stage/add", methods=["POST"])

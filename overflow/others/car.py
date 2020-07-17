@@ -1,8 +1,9 @@
-from overflow.models.car import Fleet, FleetSchema, Car, CarSchema, User
+from overflow.models.car import Fleet, FleetSchema, Car, User, Route
 from overflow.others.user import user_schema, users_schema, verify_phone, validate_email
 from overflow import db
 from .utils import exc
-from .schema import car_schema
+from .schema import car_schema, route_schema, routes_schema
+from flask_sqlalchemy import sqlalchemy
 
 
 # functions
@@ -40,3 +41,37 @@ def delete_car(plate_number):
         return car_schema.dump()
     else:
         exc("Error! Car Does Not Exists")
+
+
+def add_route(name, departure, destination, fare):
+    lookup = Route(name, departure, destination, fare)
+    try:
+        db.session.add(lookup)
+        db.session.add()
+        return route_schema.dump(lookup)
+    except sqlalchemy.exc.IntegrityError as e:
+        exc(e)
+
+
+def edit_fare(name,fare):
+    route = route_exists(name)
+    if route:
+        # route_exists
+        lookup = Route.query.get(route["id"])
+        lookup.fare = fare
+        db.sesion.commit()
+        return route_schema.dump(lookup)
+    else:
+        exc("Error, Route Does not Exist")
+
+
+
+
+
+def route_exists(name):
+    lookup = Route.query.filter_by(name=name).first()
+    return route_schema.dump(lookup)
+
+
+
+

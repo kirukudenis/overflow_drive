@@ -22,5 +22,3 @@ stages_schema = StageSchema(many=True)
 user_schema = UserSchema()
 users_schema = UserSchema(many=True)
 
-
-
