@@ -19,8 +19,9 @@ def add_car():
     owner = get("owner")
 
     if user_exists(user_param):
-        add_vehicle(plate_number, active, owner)
-    pass
+        return add_vehicle(plate_number, active, owner)
+    else:
+        return jsonify({"error":"User_does not exists"}),500
 
 
 @app.route('/vehicle/edit', methods=["POST"])

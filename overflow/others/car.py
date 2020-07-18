@@ -8,8 +8,12 @@ from flask_sqlalchemy import sqlalchemy
 
 # functions
 def add_vehicle(plate_number, active, owner):
-    lookup = Car(plate_number, active, owner)
-    return car_schema.dump(lookup)
+    if car_exists(plate_number):
+        lookup = Car(plate_number, active, owner)
+        return car_schema.dump(lookup)
+    else:
+        # later we could get vehicle data
+        exc("Error! Vehicle already exists")
 
 
 def edit_owner_email(user_id, email):
@@ -147,3 +151,5 @@ def cars_through_stage(stage):
         return cars_schema.dump(cars)
     else:
         exc("Error! Stage does not exist.")
+
+
