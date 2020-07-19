@@ -10,9 +10,9 @@ class Route(db.Model):
     destination = db.Column(db.ForeignKey("stage.id"), nullable=False)
     fare = db.Column(db.Integer, nullable=False, default=0)
 
-    def __init__(self, name, deparute, destination, fare):
+    def __init__(self, name, departure, destination, fare):
         self.name = name
-        self.departure = deparute
+        self.departure = departure
         self.destination = destination
         self.fare = fare
 

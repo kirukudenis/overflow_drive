@@ -7,7 +7,7 @@ from overflow.others.user import user_exists
 from overflow.others.utils import get
 from overflow.others.car import (add_route, edit_fare, add_vehicle, add_stage, edit_stage, get_single_vehicle,
                                  get_all_vehicles, get_routes_by_route, get_single_stage, get_all_stages,
-                                 get_stages_on_route,cars_through_stage)
+                                 get_stages_on_route, cars_through_stage, is_car_infleet)
 
 
 @app.route("/vehicle/add", methods=["POST"])
@@ -21,7 +21,7 @@ def add_car():
     if user_exists(user_param):
         return add_vehicle(plate_number, active, owner)
     else:
-        return jsonify({"error":"User_does not exists"}),500
+        return jsonify({"error": "User_does not exists"}), 500
 
 
 @app.route('/vehicle/edit', methods=["POST"])
@@ -106,10 +106,11 @@ def cars_through_stage_():
     return cars_through_stage(stage)
 
 
-# the fleet in which a car belong to
-@app.route('/fleet/cars', methods=["POST"])
+# the fleet in which a car belong to fleet
+@app.route('/fleet/car', methods=["POST"])
 def which_car_fleet():
-    pass
+    car = get("param")
+    return is_car_infleet(car)
 
 
 @app.route("/fleet/add", methods=["POST"])

@@ -1,4 +1,3 @@
-from sqlalchemy.dialects import mysql
 from overflow.models.user import User, UserSchema
 from werkzeug.security import generate_password_hash, check_password_hash
 import re
@@ -6,7 +5,7 @@ from overflow import db
 from flask_sqlalchemy import sqlalchemy
 import secrets
 import random
-from ..others.utils import error, success
+from ..others.utils import message
 
 
 # adding the schame init
@@ -15,15 +14,6 @@ users_schema = UserSchema(many=True)
 
 
 def signup(firstname, lastname, email, phone, type, password):
-    """
-    :param firstname:
-    :param lastname:
-    :param email:
-    :param phone:
-    :param type:
-    :param password:
-    :return dict:
-    """
     if verify_phone(phone):
         try:
             if not  phone_exists(phone):
@@ -36,27 +26,24 @@ def signup(firstname, lastname, email, phone, type, password):
 
         except sqlalchemy.exc.DatabaseError as e:
             return {"msg":str(e)}
-        except mysql.connector.errors.IntegrityError as e :
-            return {"msg" :str(e)}
 
         if user_schema.dump(lookup):
-            final = success("user Added SuccessFully")
+            final = message("user Added SuccessFully")
         else:
-            final = error("User Not added")
+            final = message("User Not added")
     else:
-        final = error("Phone Not valid")
+        final = message("Phone Not valid")
     return final
 
 
 def login(param, password):
     if validate_email(param):
-        # user login via username
         lookup = User.query.filter_by(email=param).first()
         user_data = user_schema.dump(lookup)
         if user_data:
             final = user_data if check_password_hash(user_data["password"],password) else None
         else:
-            raise Exception(error("User Does Not Exists"))
+            raise Exception(message("User Does Not Exists"))
     elif verify_phone(param):
         # verify phone
         lookup = User.query.filter_by(phone=param).first()
@@ -64,7 +51,7 @@ def login(param, password):
         if user_data:
             final = user_data if check_password_hash(user_data["password"],password) else None
         else:
-            raise Exception(error("User Does Not Exists"))
+            raise Exception(message("User Does Not Exists"))
     else:
         # loggin via username
         lookup = User.query.filter_by(email=param).first()
@@ -72,7 +59,7 @@ def login(param, password):
         if user_data:
             final = user_data if check_password_hash(user_data["password"],password) else None
         else:
-            raise Exception(error("User Does Not Exists"))
+            raise Exception(message("User Does Not Exists"))
     return final
 
 
@@ -90,10 +77,6 @@ def validate_email(email):
 
 
 def verify_phone(number):
-    """
-    :param number:
-    :return:
-    """
     regex = re.compile(r'^[+]*[(]?[0-9]{1,4}[)]?[-\s\./0-9]*$', re.IGNORECASE)
     return re.match(regex, number)
 

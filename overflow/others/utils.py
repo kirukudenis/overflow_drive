@@ -1,17 +1,25 @@
-from flask import request
+from flask import request, jsonify
+import json
 
 
 def get(key):
-    return request.json[key]
+    try:
+        return request.json[key]
+    except TypeError:
+        exc("Error! {} is required.".format(key))
+    except KeyError:
+        exc("Error! {} is required.".format(key))
 
 
 def exc(msg):
-    raise Exception(error("User Does Not Exists"))
+    raise Exception(msg)
 
 
-def error(message):
-    return {"status": False, "msg": message}
+def message(message):
+    return {"response": message}
 
 
-def success(message):
-    return {"status": True, "msg": message}
+def response(msg, code):
+    string = "{" + f'"response": "{msg}"' + "}"
+    d = json.loads(string.replace("'", "\""))
+    return jsonify(d),500

@@ -2,7 +2,8 @@ from overflow.models.car import Fleet, FleetSchema, Car, User, Route, Stage
 from overflow.others.user import user_schema, users_schema, verify_phone, validate_email
 from overflow import db
 from .utils import exc
-from .schema import (car_schema, cars_schema, route_schema, routes_schema, stage_schema, stages_schema)
+from .schema import (car_schema, cars_schema, route_schema, routes_schema, stage_schema, stages_schema,
+                     fleet_schema, fleets_schema)
 from flask_sqlalchemy import sqlalchemy
 
 
@@ -130,11 +131,6 @@ def get_single_stage(name_id):
     return stage_schema.dump(lookup)
 
 
-def get_all_stages():
-    lookup = Stage.get.all()
-    return stage_schema.dump(lookup)
-
-
 def get_stages_on_route(route):
     lookup = Stage.query.filter_by(route=route).all()
     return stages_schema.dump(lookup)
@@ -153,3 +149,13 @@ def cars_through_stage(stage):
         exc("Error! Stage does not exist.")
 
 
+def is_car_infleet(param):
+    if car_exists(param):
+        lookup = Car.query.filter_by(plate_number=param).first() or Car.query.get(param)
+        car_data = cars_schema.dump(lookup)
+        route = car_data["route"]
+        # getting the fleet b this name
+        fleet_lookup = Fleet.query.filter_by(route=route).first()
+        return fleet_schema.dump(is_car_infleet())
+    else:
+        exc("Error!, Car Doe Not Exist.")
