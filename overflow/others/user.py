@@ -93,6 +93,4 @@ def phone_exists(phone):
     return user_schema.dump(lookup)
 
 
-
-
 # def

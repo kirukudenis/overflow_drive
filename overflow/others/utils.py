@@ -15,8 +15,8 @@ def exc(msg):
     raise Exception(msg)
 
 
-def message(message):
-    return {"response": message}
+def message(msg):
+    return {"response": msg}
 
 
 def response(msg, code):
