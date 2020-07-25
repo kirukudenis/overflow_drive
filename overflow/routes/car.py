@@ -11,7 +11,7 @@ from overflow.others.car import (add_route, edit_fare, add_vehicle, add_stage, e
 
 
 @app.route("/vehicle/add", methods=["POST"])
-# @jwt_required
+@jwt_required
 def add_car():
     try:
         plate_number = get("plate_number")
@@ -31,11 +31,13 @@ def add_car():
         return response(e,500)
 
 @app.route('/vehicle/edit', methods=["POST"])
+@jwt_required
 def edit_car():
     pass
 
 
 @app.route("/vehicle/route/get", methods=["POST"])
+@jwt_required
 def get_routes_by_route_():
     route = get("route")
     return get_routes_by_route(route)
@@ -48,17 +50,20 @@ get a single car with either the id or the plate number
 
 
 @app.route("/vehicle/get/single", methods=["POST"])
+@jwt_required
 def get_single_car():
     plate_or_id = get("plate_id")
     return jsonify(get_single_vehicle(plate_or_id))
 
 
 @app.route('/vehicle/get/all', methods=["POST"])
+@jwt_required
 def get_all_vehicles_():
     return jsonify(get_all_vehicles())
 
 
 @app.route("/route/add", methods=["POST"])
+@jwt_required
 def add_route_():
     try :
         name = get("name")
@@ -72,6 +77,7 @@ def add_route_():
 
 
 @app.route("/route/fare/edit", methods=["POST"])
+@jwt_required
 def edit_route_():
     name = get("name")
     fare = get("fare")
@@ -79,6 +85,7 @@ def edit_route_():
 
 
 @app.route("/stage/add", methods=["POST"])
+@jwt_required
 def add_stage_():
     try :
         name = get("name")
@@ -89,6 +96,7 @@ def add_stage_():
 
 
 @app.route("/stage/edit", methods=["POST"])
+@jwt_required
 def edit_stage_():
     name = get("name")
     route = get("route")
@@ -96,17 +104,20 @@ def edit_stage_():
 
 
 @app.route("/stage/get/single", methods=["POST"])
+@jwt_required
 def get_stage():
     name_id = get("name_id")
     return get_single_stage(name_id)
 
 
 @app.route("/stage/get/all", methods=["POST"])
+@jwt_required
 def get_all_stages_():
     return get_all_stages()
 
 
 @app.route("/stages/on/route", methods=["POST"])
+@jwt_required
 def stages_on_route():
     route = get("route")
     return get_stages_on_route(route)
@@ -114,6 +125,7 @@ def stages_on_route():
 
 # these are the cars that stop wthin a give stage
 @app.route("/stage/by/cars", methods=["POST"])
+@jwt_required
 def cars_through_stage_():
     stage = get("stage")
     return cars_through_stage(stage)
@@ -121,36 +133,43 @@ def cars_through_stage_():
 
 # the fleet in which a car belong to fleet
 @app.route('/fleet/car', methods=["POST"])
+@jwt_required
 def which_car_fleet():
     car = get("param")
     return is_car_infleet(car)
 
 
 @app.route("/fleet/add", methods=["POST"])
+@jwt_required
 def add_fleet():
     pass
 
 
 @app.route('/fleet/edit', methods=["POST"])
+@jwt_required
 def edit_fleet():
     pass
 
 
 @app.route("/fleet/cars/add", methods=["POST"])
+@jwt_required
 def add_car_fleet():
     pass
 
 
 @app.route("/fleet/car/remove", methods=["POST"])
+@jwt_required
 def remove_car_fleet():
     pass
 
 
 @app.route('/fleet/car/active', methods=["POST"])
+@jwt_required
 def active_car_fleet():
     pass
 
 @app.route("/departure_destination/add",methods=["POST"])
+@jwt_required
 def departure_destination():
     try:
         name = get("name")
