@@ -66,7 +66,7 @@ def add_route(name, departure, destination, fare):
         try:
             route_exists_detail(name, departure, destination)
             db.session.add(lookup)
-            # db.session.commit()
+            db.session.commit()
             return route_schema.dump(lookup)
         except Exception as e:
             exc(e)

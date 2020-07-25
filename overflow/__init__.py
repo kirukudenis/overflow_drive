@@ -10,6 +10,11 @@ from datetime import timedelta, datetime
 # __init__ the app
 app = Flask(__name__)
 
+
+# adding JWT TO THE APP
+jwt = JWTManager(app)
+
+
 # setting the key for JWT
 app.config["JWT_SECRET_KEY"] = secrets.token_hex(16)
 
@@ -22,8 +27,6 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=5)
 
 
-# adding JWT TO THE APP
-jwt = JWTManager(app)
 
 # adding marshmallow
 ma = Marshmallow(app)
