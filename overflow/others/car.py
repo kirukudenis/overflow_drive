@@ -1,17 +1,28 @@
-from overflow.models.car import Fleet, FleetSchema, Car, User, Route, Stage
+from overflow.models.car import Fleet, FleetSchema, Car, User, Route, Stage, DestinationDeparture
 from overflow.others.user import user_schema, users_schema, verify_phone, validate_email
 from overflow import db
 from .utils import exc
+from .user import user_exists
 from .schema import (car_schema, cars_schema, route_schema, routes_schema, stage_schema, stages_schema,
-                     fleet_schema, fleets_schema)
+                     fleet_schema, fleets_schema, destination_departure_schema, destination_departures_schema)
 from flask_sqlalchemy import sqlalchemy
 
 
 # functions
-def add_vehicle(plate_number, active, owner):
-    if car_exists(plate_number):
-        lookup = Car(plate_number, active, owner)
-        return car_schema.dump(lookup)
+def add_vehicle(plate_number, active, owner, route):
+    if not car_exists(plate_number):
+        if user_exists(owner):
+            try:
+                lookup = Car(plate_number,bool(active), owner, route)
+                db.session.add(lookup)
+                db.session.commit()
+                return car_schema.dump(lookup)
+            except sqlalchemy.exc.IntegrityError as e:
+                exc("Car with such plate number exists")
+            except Exception as e:
+                exc(e)
+        else:
+            exc("user Does Not Exists")
     else:
         # later we could get vehicle data
         exc("Error! Vehicle already exists")
@@ -34,8 +45,9 @@ def edit_owner_email(user_id, email):
 
 
 def car_exists(params):
-    lookup = Car.query.get(params) or Car.query.filter_by(plate_number=params)
-    return car_schema.dump(lookup)
+    lookup = Car.query.filter_by(plate_number=params) or Car.query.get(params)
+    car_data = car_schema.dump(lookup)
+    return car_data
 
 
 def delete_car(plate_number):
@@ -51,11 +63,33 @@ def delete_car(plate_number):
 def add_route(name, departure, destination, fare):
     lookup = Route(name, departure, destination, fare)
     try:
-        db.session.add(lookup)
-        db.session.add()
-        return route_schema.dump(lookup)
+        try:
+            route_exists_detail(name, departure, destination)
+            db.session.add(lookup)
+            # db.session.commit()
+            return route_schema.dump(lookup)
+        except Exception as e:
+            exc(e)
     except sqlalchemy.exc.IntegrityError as e:
+        exc(f"Error!, Record Route to {name} Exists")
+    except Exception as e:
         exc(e)
+
+
+def route_exists_detail(name, depart, dest):
+    condition_one = Route.query.filter_by(name=name).first()
+    condition_two = Route.query.filter_by(departure=depart).filter_by(destination=dest).first()
+    data_one = route_schema.dump(condition_one)
+    data_two = route_schema.dump(condition_two)
+    if type(depart) == int and type(dest) == int:
+        if condition_one:
+            exc("Route with name given exists")
+        elif condition_two:
+            exc("Route with such Desination and Depreture Exists")
+        else:
+            return True
+    else:
+        exc("Desination/Departure Types Error")
 
 
 def edit_fare(name, fare):
@@ -71,11 +105,18 @@ def edit_fare(name, fare):
 
 
 def add_stage(name, route):
-    if not stage_exists(name.route):
+    if not stage_exists(name, route):
+        print("stage does not exist")
         # stage does exists
-        lookup = Stage(name, route)
-        return stage_schema.dump(lookup)
+        try:
+            lookup = Stage(name, route)
+            db.session.add(lookup)
+            db.session.commit()
+            return stage_schema.dump(lookup)
+        except sqlalchemy.exc.IntegrityError as e:
+            exc(e)
     else:
+        print("stage exists")
         exc("Error! Stage By That name exists")
 
 
@@ -159,3 +200,13 @@ def is_car_infleet(param):
         return fleet_schema.dump(is_car_infleet())
     else:
         exc("Error!, Car Doe Not Exist.")
+
+
+def add_destination(name):
+    try:
+        lookup = DestinationDeparture(name)
+        db.session.add(lookup)
+        db.session.commit()
+        return destination_departure_schema.dump(lookup)
+    except Exception as e:
+        exc(e)

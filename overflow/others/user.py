@@ -5,7 +5,7 @@ from overflow import db
 from flask_sqlalchemy import sqlalchemy
 import secrets
 import random
-from ..others.utils import message
+from ..others.utils import message,error,success
 
 
 # adding the schame init
@@ -22,17 +22,17 @@ def signup(firstname, lastname, email, phone, type, password):
                 db.session.add(lookup)
                 db.session.commit()
             else:
-                return {"msg":"User Phone Exists"}
+                return {"status":None,"msg":"User Phone Exists"}
 
         except sqlalchemy.exc.DatabaseError as e:
             return {"msg":str(e)}
 
         if user_schema.dump(lookup):
-            final = message("user Added SuccessFully")
+            final = success("user Added SuccessFully")
         else:
-            final = message("User Not added")
+            final = error("User Not added")
     else:
-        final = message("Phone Not valid")
+        final = error("Phone Not valid")
     return final
 
 
@@ -64,9 +64,9 @@ def login(param, password):
 
 
 def user_exists(param):
-    lookup = User.query.get(param) or User.query.filter_by(email=param).first() or User.query.filter_by(
-        username=param).first()
-    return users_schema.dump(lookup)
+    lookup = User.query.filter_by(email=param).first()
+    final = user_schema.dump(lookup)
+    return final
 
 
 def validate_email(email):

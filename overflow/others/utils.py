@@ -19,7 +19,17 @@ def message(msg):
     return {"response": msg}
 
 
+def error(msg):
+    return {"status": False, "response": msg}
+
+
+def success(msg):
+    return {"status": True, "response": msg}
+
+
 def response(msg, code):
-    string = "{" + f'"response": "{msg}"' + "}"
+    string = "{" + f'"response": "{str(msg)}"' + "}"
     d = json.loads(string.replace("'", "\""))
-    return jsonify(d),500
+    return jsonify(d), 500
+
+

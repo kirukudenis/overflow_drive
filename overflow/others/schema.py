@@ -1,4 +1,4 @@
-from overflow.models.car import (CarSchema, FleetSchema,RouteSchema,StageSchema)
+from overflow.models.car import (CarSchema, FleetSchema,RouteSchema,StageSchema,DestinationDepartureSchema)
 from overflow.models.user import (UserSchema)
 
 # schemas
@@ -21,4 +21,9 @@ stages_schema = StageSchema(many=True)
 # user schema
 user_schema = UserSchema()
 users_schema = UserSchema(many=True)
+
+# destination_departure schema
+destination_departure_schema = DestinationDepartureSchema()
+destination_departures_schema = DestinationDepartureSchema(many=True)
+
 

@@ -4,25 +4,31 @@ from flask_jwt_extended import jwt_required, create_access_token, get_jwt_identi
 
 # get additional functions
 from overflow.others.user import user_exists
-from overflow.others.utils import get
+from overflow.others.utils import get,response
 from overflow.others.car import (add_route, edit_fare, add_vehicle, add_stage, edit_stage, get_single_vehicle,
                                  get_all_vehicles, get_routes_by_route, get_single_stage, get_all_stages,
-                                 get_stages_on_route, cars_through_stage, is_car_infleet)
+                                 get_stages_on_route, cars_through_stage, is_car_infleet,add_destination)
 
 
 @app.route("/vehicle/add", methods=["POST"])
-@jwt_required
+# @jwt_required
 def add_car():
-    user_param = get("param")
-    plate_number = get("plate_number")
-    active = get("active")
-    owner = get("owner")
+    try:
+        plate_number = get("plate_number")
+        active = get("active")
+        owner = get("owner")
+        route = get("route")
 
-    if user_exists(user_param):
-        return add_vehicle(plate_number, active, owner)
-    else:
-        return jsonify({"error": "User_does not exists"}), 500
-
+        if user_exists(owner):
+            try:
+                final = add_vehicle(plate_number, active, owner,route)
+                return final
+            except Exception as e:
+                return response(e,500)
+        else:
+            return jsonify({"error": "User_does not exists"}), 500
+    except Exception as e :
+        return response(e,500)
 
 @app.route('/vehicle/edit', methods=["POST"])
 def edit_car():
@@ -54,11 +60,15 @@ def get_all_vehicles_():
 
 @app.route("/route/add", methods=["POST"])
 def add_route_():
-    name = get("name")
-    departure = get("departure")
-    destination = get("destination")
-    fare = get("fare")
-    return jsonify(add_route(name, departure, destination, fare))
+    try :
+        name = get("name")
+        departure = get("departure")
+        destination = get("destination")
+        fare = get("fare")
+        final = add_route(name, departure, destination, fare)
+        return jsonify(final)
+    except Exception as e:
+        return response(e,500)
 
 
 @app.route("/route/fare/edit", methods=["POST"])
@@ -70,9 +80,12 @@ def edit_route_():
 
 @app.route("/stage/add", methods=["POST"])
 def add_stage_():
-    name = get("name")
-    route = get("route")
-    return jsonify(add_stage(name, route))
+    try :
+        name = get("name")
+        route = get("route")
+        return jsonify(add_stage(name, route))
+    except Exception as e:
+        return response(e,500)
 
 
 @app.route("/stage/edit", methods=["POST"])
@@ -135,4 +148,13 @@ def remove_car_fleet():
 
 @app.route('/fleet/car/active', methods=["POST"])
 def active_car_fleet():
+    pass
+
+@app.route("/departure_destination/add",methods=["POST"])
+def departure_destination():
+    try:
+        name = get("name")
+        return jsonify(add_destination(name))
+    except Exception as e :
+        return response(e,500)
     pass

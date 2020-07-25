@@ -4,7 +4,6 @@ import random
 
 
 class User(db.Model):
-    # id = db.Column(db.Integer, primary_key=True, nullable=False)
     id = db.Column(db.Integer, primary_key=True)
     firstname = db.Column(db.String(100), primary_key=True, nullable=False)
     lastname = db.Column(db.String(100), nullable=False)

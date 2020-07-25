@@ -6,8 +6,8 @@ from .user import User
 class Route(db.Model):
     id = db.Column(db.Integer, primary_key=True, nullable=False)
     name = db.Column(db.String(length=255), nullable=False, unique=True)
-    departure = db.Column(db.ForeignKey("stage.id"), nullable=False)
-    destination = db.Column(db.ForeignKey("stage.id"), nullable=False)
+    departure = db.Column(db.ForeignKey("destination_departure.id"), nullable=False)
+    destination = db.Column(db.ForeignKey("destination_departure.id"), nullable=False)
     fare = db.Column(db.Integer, nullable=False, default=0)
 
     def __init__(self, name, departure, destination, fare):
@@ -90,3 +90,17 @@ class Group(db.Model):
 class GroupSchema(ma.Schema):
     class Meta:
         fields = ("id", "name", "route", "car", "active")
+
+
+# adding a destination/departure
+class DestinationDeparture(db.Model):
+    id = db.Column(db.Integer, primary_key=True, nullable=False)
+    name = db.Column(db.String(length=255), nullable=False)
+
+    def __init__(self, name):
+        self.name = name
+
+
+class DestinationDepartureSchema(ma.Schema):
+    class Meta:
+        fields = ("id", "name")
