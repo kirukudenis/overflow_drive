@@ -13,7 +13,7 @@ def add_vehicle(plate_number, active, owner, route):
     if not car_exists(plate_number):
         if user_exists(owner):
             try:
-                lookup = Car(plate_number,bool(active), owner, route)
+                lookup = Car(plate_number, bool(active), owner, route)
                 db.session.add(lookup)
                 db.session.commit()
                 return car_schema.dump(lookup)
@@ -44,8 +44,38 @@ def edit_owner_email(user_id, email):
         # return None
 
 
+def edit_vehicle_route(param, route):
+    if car_exists(param):
+        if user_exists(owner):
+            # we have a car else
+            lookup = Car.query.filter_by(plate_number=param).first() or Car.query.get(param)
+            lookup.owner = owner
+            db.session.commit()
+            return car_schema.dump(lookup)
+        else:
+            exc("Error! Owner Deos Not Exist.")
+    else:
+        # the car does not exist
+        exc("Error! Vehicle Does not exists")
+
+
+def edit_vehicle_owner(param, owner):
+    if car_exists(param):
+        if user_exists(owner):
+            # we have a car else
+            lookup = Car.query.filter_by(plate_number=param).first() or Car.query.get(param)
+            lookup.owner = owner
+            db.session.commit()
+            return car_schema.dump(lookup)
+        else:
+            exc("Error! Owner Deos Not Exist.")
+    else:
+        # the car does not exist
+        exc("Error! Vehicle Does not exists")
+
+
 def car_exists(params):
-    lookup = Car.query.filter_by(plate_number=params) or Car.query.get(params)
+    lookup = Car.query.filter_by(plate_number=params).first() or Car.query.get(params)
     car_data = car_schema.dump(lookup)
     return car_data
 
@@ -153,7 +183,7 @@ def get_all_stages():
 
 
 def get_single_vehicle(plate_or_id):
-    lookup = Car.query.filter_by(plate_or_id).first() or Car.query.get(plate_or_id)
+    lookup = Car.query.filter_by(plate_or_id).first() or Car.query.get(int(plate_or_id))
     return car_schema.dump()
 
 
@@ -168,7 +198,7 @@ def get_routes_by_route(route):
 
 
 def get_single_stage(name_id):
-    lookup = Stage.query.filter_by(name=name_id).first() or Stage.query.get(name_id)
+    lookup = Stage.query.filter_by(name=name_id).first() or Stage.query.get(int(name_id))
     return stage_schema.dump(lookup)
 
 
@@ -192,14 +222,14 @@ def cars_through_stage(stage):
 
 def is_car_infleet(param):
     if car_exists(param):
-        lookup = Car.query.filter_by(plate_number=param).first() or Car.query.get(param)
+        lookup = Car.query.filter_by(plate_number=param).first() or Car.query.get(int(param))
         car_data = cars_schema.dump(lookup)
         route = car_data["route"]
         # getting the fleet b this name
         fleet_lookup = Fleet.query.filter_by(route=route).first()
         return fleet_schema.dump(is_car_infleet())
     else:
-        exc("Error!, Car Doe Not Exist.")
+        exc("Error!, Car Does Not Exist.")
 
 
 def add_destination(name):
@@ -210,3 +240,47 @@ def add_destination(name):
         return destination_departure_schema.dump(lookup)
     except Exception as e:
         exc(e)
+
+
+def add_fleet(name, route):
+    if type(route) == int:
+        if not fleet_exists(name):
+            lookup = Fleet(name, route)
+            db.session.add(lookup)
+            db.session.commit()
+            return fleet_schema.dump(lookup)
+        else:
+            exc("Error! Fleet by that name exists")
+    else:
+        exc("Error! Route param does not exist.")
+
+
+def fleet_exists(param):
+    lookup = Fleet.query.filter_by(name=param).first() or Fleet.query.get(int(param))
+    final = fleet_schema.dump(lookup)
+    print(final)
+    return final
+
+
+def edit_fleet_name(name,id):
+    if fleet_exists(name):
+        lookup = Fleet.query.get(id)
+        lookup.name = name
+        db.session.commit()
+        return fleet_schema.dump(lookup)
+    else:
+        exc("Error! Fleet Does Not Exist")
+
+
+def update_car_fleet(car_id,fleet):
+    if fleet_exists(fleet):
+        if car_exists(car_id):
+            lookup = Car.query.get(car_id)
+            lookup.fleet_id = fleet
+            db.session.commit()
+            return car_schema.dump(lookup)
+        else:
+            exc("Error! Car Does Not Exist.")
+    else:
+        exc("Error! Fleet Does Not Exists")
+

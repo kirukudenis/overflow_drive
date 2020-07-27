@@ -7,7 +7,8 @@ from overflow.others.user import user_exists
 from overflow.others.utils import get,response
 from overflow.others.car import (add_route, edit_fare, add_vehicle, add_stage, edit_stage, get_single_vehicle,
                                  get_all_vehicles, get_routes_by_route, get_single_stage, get_all_stages,
-                                 get_stages_on_route, cars_through_stage, is_car_infleet,add_destination)
+                                 get_stages_on_route, cars_through_stage, is_car_infleet,add_destination,add_fleet,
+                                 edit_fleet_name,update_car_fleet)
 
 
 @app.route("/vehicle/add", methods=["POST"])
@@ -30,10 +31,22 @@ def add_car():
     except Exception as e :
         return response(e,500)
 
-@app.route('/vehicle/edit', methods=["POST"])
+@app.route('/vehicle/owner/edit', methods=["POST"])
 @jwt_required
 def edit_car():
-    pass
+    try:
+        plate_number = get("plate_number")
+        owner = get("owner")
+        if user_exists(owner):
+            try:
+                final = add_vehicle(plate_number, active, owner, route)
+                return final
+            except Exception as e:
+                return response(e, 500)
+        else:
+            return jsonify({"error": "User_does not exists"}), 500
+    except Exception as e:
+        return response(e, 500)
 
 
 @app.route("/vehicle/route/get", methods=["POST"])
@@ -141,20 +154,36 @@ def which_car_fleet():
 
 @app.route("/fleet/add", methods=["POST"])
 @jwt_required
-def add_fleet():
-    pass
+def add_fleet_():
+    # a group of cars the go to the same location
+    try:
+        name = get("name")
+        route = get("route")
+        return add_fleet(name,route)
+    except Exception as e:
+        return response(e,500)
 
 
-@app.route('/fleet/edit', methods=["POST"])
-@jwt_required
+@app.route('/fleet/edit/name', methods=["PUT"])
+# @jwt_required
 def edit_fleet():
-    pass
+    try:
+        name = get("name")
+        id = get("id")
+        return edit_fleet_name(name,id)
+    except Exception as e:
+        return response(e,500)
 
 
-@app.route("/fleet/cars/add", methods=["POST"])
-@jwt_required
+@app.route("/fleet/car/add", methods=["PUT"])
+# @jwt_required
 def add_car_fleet():
-    pass
+    try:
+        fleet= get("fleet")
+        car_id = get("car_id")
+        return update_car_fleet(car_id,fleet)
+    except Exception as e:
+        return response(e,500)
 
 
 @app.route("/fleet/car/remove", methods=["POST"])

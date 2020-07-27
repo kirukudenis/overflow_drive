@@ -17,10 +17,13 @@ def signup(firstname, lastname, email, phone, type, password):
     if verify_phone(phone):
         try:
             if not  phone_exists(phone):
-                password = generate_password_hash(password)
-                lookup = User(random.getrandbits(24),firstname, lastname, email, phone, int(type), password)
-                db.session.add(lookup)
-                db.session.commit()
+                if validate_email(email):
+                    password = generate_password_hash(password)
+                    lookup = User(random.getrandbits(24),firstname, lastname, email, phone, int(type), password)
+                    db.session.add(lookup)
+                    db.session.commit()
+                else:
+                    return {"status" : None,"msg" : "Email Not valid"}
             else:
                 return {"status":None,"msg":"User Phone Exists"}
 
@@ -64,7 +67,7 @@ def login(param, password):
 
 
 def user_exists(param):
-    lookup = User.query.filter_by(email=param).first()
+    lookup = User.query.filter_by(email=param).first() or User.query.get(param)
     final = user_schema.dump(lookup)
     return final
 
@@ -85,6 +88,7 @@ def random_four():
     rand = random.getrandbits(24)
     numbers = str(rand)
     final = [numbers[i:i+4] for i in range(0, len(numbers), 4)]
+
     return final
 
 
