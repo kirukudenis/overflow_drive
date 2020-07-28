@@ -1,10 +1,10 @@
-from overflow.models.car import (CarSchema, FleetSchema,RouteSchema,StageSchema,DestinationDepartureSchema)
+from overflow.models.vehicle import (VehicleSchema, FleetSchema, RouteSchema, StageSchema, DestinationDepartureSchema)
 from overflow.models.user import (UserSchema)
 
 # schemas
 # car
-car_schema = CarSchema()
-cars_schema = CarSchema(many=True)
+car_schema = VehicleSchema()
+cars_schema = VehicleSchema(many=True)
 
 # fleet schema
 fleet_schema = FleetSchema()

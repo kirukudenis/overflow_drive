@@ -46,5 +46,5 @@ def check_if_token_in_blacklist(decrypted_token):
     return jti in blacklist
 
 
-from overflow.routes import user, car
-from overflow.models import user, car, payment
+from overflow.routes import user, vehicle
+from overflow.models import user, vehicle, payment

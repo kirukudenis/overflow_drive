@@ -22,7 +22,7 @@ class RouteSchema(ma.Schema):
         fields = ("id", "name", "departure", "destination", "fare")
 
 
-class Car(db.Model):
+class Vehicle(db.Model):
     id = db.Column(db.Integer, primary_key=True, nullable=False)
     plate_number = db.Column(db.String(100), nullable=False, unique=True)
     fleet_id = db.Column(db.ForeignKey("fleet.id"), nullable=True)
@@ -38,7 +38,7 @@ class Car(db.Model):
         self.route = route
 
 
-class CarSchema(ma.Schema):
+class VehicleSchema(ma.Schema):
     class Meta:
         fields = ("id", "platenumber", "fleet_id", "active", "in_service")
 

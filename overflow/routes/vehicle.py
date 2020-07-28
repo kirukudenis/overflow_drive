@@ -5,10 +5,10 @@ from flask_jwt_extended import jwt_required, create_access_token, get_jwt_identi
 # get additional functions
 from overflow.others.user import user_exists
 from overflow.others.utils import get,response
-from overflow.others.car import (add_route, edit_fare, add_vehicle, add_stage, edit_stage, get_single_vehicle,
-                                 get_all_vehicles, get_routes_by_route, get_single_stage, get_all_stages,
-                                 get_stages_on_route, cars_through_stage, is_car_infleet,add_destination,add_fleet,
-                                 edit_fleet_name,update_car_fleet)
+from overflow.others.vehicle import (add_route, edit_fare, add_vehicle, add_stage, edit_stage, get_single_vehicle,
+                                     get_all_vehicles, get_routes_by_route, get_single_stage, get_all_stages,
+                                     get_stages_on_route, cars_through_stage, is_car_infleet, add_destination, add_fleet,
+                                     edit_fleet_name, add_car_fleet)
 
 
 @app.route("/vehicle/add", methods=["POST"])
@@ -177,19 +177,23 @@ def edit_fleet():
 
 @app.route("/fleet/car/add", methods=["PUT"])
 # @jwt_required
-def add_car_fleet():
+def add_vehicle_fleet():
     try:
         fleet= get("fleet")
         car_id = get("car_id")
-        return update_car_fleet(car_id,fleet)
+        return add_car_fleet(car_id, fleet)
     except Exception as e:
         return response(e,500)
 
 
 @app.route("/fleet/car/remove", methods=["POST"])
 @jwt_required
-def remove_car_fleet():
-    pass
+def remove_vehicle_fleet():
+    try:
+        param = get("plate_or_id")
+        param = get("fleet_id")
+    except Exception as e:
+        return response(e,500)
 
 
 @app.route('/fleet/car/active', methods=["POST"])
