@@ -186,6 +186,8 @@ def add_vehicle_fleet():
         return response(e,500)
 
 
+
+
 @app.route("/fleet/car/remove", methods=["POST"])
 @jwt_required
 def remove_vehicle_fleet():
@@ -196,11 +198,6 @@ def remove_vehicle_fleet():
         return response(e,500)
 
 
-@app.route('/fleet/car/active', methods=["POST"])
-@jwt_required
-def active_car_fleet():
-    pass
-
 @app.route("/departure_destination/add",methods=["POST"])
 @jwt_required
 def departure_destination():
@@ -209,4 +206,3 @@ def departure_destination():
         return jsonify(add_destination(name))
     except Exception as e :
         return response(e,500)
-    pass
