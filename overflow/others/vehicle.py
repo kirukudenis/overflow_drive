@@ -1,11 +1,13 @@
-from overflow.models.vehicle import Fleet, FleetSchema, Vehicle, User, Route, Stage, DestinationDeparture
-from overflow.others.user import user_schema, users_schema, verify_phone, validate_email
-from overflow import db
-from .utils import exc
-from .user import user_exists
-from .schema import (car_schema, cars_schema, route_schema, routes_schema, stage_schema, stages_schema,
-                     fleet_schema, fleets_schema, destination_departure_schema, destination_departures_schema)
 from flask_sqlalchemy import sqlalchemy
+
+from overflow import db
+from overflow.models.user import User
+from overflow.models.car import Fleet, Car, Route, Stage, DestinationDeparture
+from overflow.others.user import user_schema, validate_email
+from .schema import (car_schema, cars_schema, route_schema, stage_schema, stages_schema,
+                     fleet_schema, destination_departure_schema)
+from .user import user_exists
+from .utils import exc
 
 
 # functions
@@ -13,7 +15,7 @@ def add_vehicle(plate_number, active, owner, route):
     if not car_exists(plate_number):
         if user_exists(owner):
             try:
-                lookup = Vehicle(plate_number, bool(active), owner, route)
+                lookup = Car(plate_number, bool(active), owner, route)
                 db.session.add(lookup)
                 db.session.commit()
                 return car_schema.dump(lookup)
@@ -49,7 +51,7 @@ def edit_vehicle_route(param, route):
         if user_exists(param):
             if route_exists(route):
                 # we have a car else
-                lookup = Vehicle.query.filter_by(plate_number=param).first() or Vehicle.query.get(param)
+                lookup = Car.query.filter_by(plate_number=param).first() or Car.query.get(param)
                 lookup.route = route
                 db.session.commit()
                 return car_schema.dump(lookup)
@@ -66,7 +68,7 @@ def edit_vehicle_owner(param, owner):
     if car_exists(param):
         if user_exists(owner):
             # we have a car else
-            lookup = Vehicle.query.filter_by(plate_number=param).first() or Vehicle.query.get(param)
+            lookup = Car.query.filter_by(plate_number=param).first() or Car.query.get(param)
             lookup.owner = owner
             db.session.commit()
             return car_schema.dump(lookup)
@@ -78,13 +80,13 @@ def edit_vehicle_owner(param, owner):
 
 
 def car_exists(params):
-    lookup = Vehicle.query.filter_by(plate_number=params).first() or Vehicle.query.get(params)
+    lookup = Car.query.filter_by(plate_number=params).first() or Car.query.get(params)
     car_data = car_schema.dump(lookup)
     return car_data
 
 
 def delete_car(plate_number):
-    lookup = Vehicle.query.filter_by(plate_number=plate_number).first()
+    lookup = Car.query.filter_by(plate_number=plate_number).first()
     if lookup:
         lookup.in_service = False
         db.session.commit()
@@ -186,17 +188,17 @@ def get_all_stages():
 
 
 def get_single_vehicle(plate_or_id):
-    lookup = Vehicle.query.filter_by(plate_or_id).first() or Vehicle.query.get(int(plate_or_id))
+    lookup = Car.query.filter_by(plate_or_id).first() or Car.query.get(int(plate_or_id))
     return car_schema.dump()
 
 
 def get_all_vehicles():
-    lookup = Vehicle.query.all()
+    lookup = Car.query.all()
     return cars_schema.dump(lookup)
 
 
 def get_routes_by_route(route):
-    lookup = Vehicle.query.filter_by(route=route).all()
+    lookup = Car.query.filter_by(route=route).all()
     return cars_schema.dump(lookup)
 
 
@@ -217,7 +219,7 @@ def cars_through_stage(stage):
         stage_route = stage_data["route"]
 
         # get the cars that are in the route id
-        cars = Vehicle.query.filter_by(route=stage_route).all()
+        cars = Car.query.filter_by(route=stage_route).all()
         return cars_schema.dump(cars)
     else:
         exc("Error! Stage does not exist.")
@@ -225,7 +227,7 @@ def cars_through_stage(stage):
 
 def is_car_infleet(param):
     if car_exists(param):
-        lookup = Vehicle.query.filter_by(plate_number=param).first() or Vehicle.query.get(int(param))
+        lookup = Car.query.filter_by(plate_number=param).first() or Car.query.get(int(param))
         car_data = cars_schema.dump(lookup)
         route = car_data["route"]
         # getting the fleet b this name
@@ -278,7 +280,7 @@ def edit_fleet_name(name, id):
 def add_car_fleet(car_id, fleet):
     if fleet_exists(fleet):
         if car_exists(car_id):
-            lookup = Vehicle.query.get(car_id)
+            lookup = Car.query.get(car_id)
             lookup.fleet_id = fleet
             db.session.commit()
             return car_schema.dump(lookup)
@@ -291,7 +293,7 @@ def add_car_fleet(car_id, fleet):
 def remove_car_fleet(car_id, fleet):
     if fleet_exists(fleet):
         if car_exists(car_id):
-            lookup = Vehicle.query.get(car_id)
+            lookup = Car.query.get(car_id)
             lookup.fleet_id = None
             db.session.commit()
             return car_schema.dump(lookup)

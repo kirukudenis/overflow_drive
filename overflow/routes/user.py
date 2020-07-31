@@ -1,7 +1,8 @@
-from overflow import app, jwt
-from flask import jsonify, request
-from flask_jwt_extended import jwt_required, create_access_token, get_jwt_identity
-from ..others.user import signup, login
+from flask import jsonify
+from flask_jwt_extended import create_access_token
+
+from overflow import app
+from ..others.user import signup, login, generate_user_token,get_token,send_code
 from ..others.utils import get, response
 
 
@@ -19,7 +20,7 @@ def user_login_():
                 return response(access_token, 200)
             else:
                 return response("Error! Bad Email Password Combination", 404)
-        except Exception as e:
+        except Exception:
             return response("Bad username or password", 401)
     except Exception as e:
         return response(e, 500)
@@ -36,6 +37,47 @@ def signup_():
         password = get("password")
         return jsonify(signup(firstname, lastname, email, phone, type_, password))
     except Exception as e:
-        # return jsonify({"msg": str(e)})
         return response(e, 500)
-    # return jsonify(signup(firstname, lastname, email, phone, type_, password))
+
+
+@app.route('/user/password/reset/token/get', methods=['POST'])
+def reset_password():
+    try:
+        user = get("param")
+        return generate_user_token(user)
+    except Exception as e:
+        return response(e,500)
+
+
+@app.route("/user/password/reset/confirm", methods=["POST"])
+def reset_token():
+    # reset token
+    try:
+        param = get("param")
+        lookup = get_token(param)
+        return jsonify(lookup)
+    except Exception as e:
+        return response(e,500)
+
+
+@app.route('/user/password/resend/code', methods=["POST"])
+def resend_code():
+    # resend code
+    try:
+        param = get("param")
+        lookup = get_token(param)
+        if lookup:
+            return send_code(lookup["code"],lookup["email"])
+        else:
+            return response("Error! Code Does Not exist",404)
+    except Exception as e:
+        return response(e,500)
+    # check if code is in db for the suer sthat is not used
+    pass
+
+
+@app.route("/user/password/reset", methods=["POST"])
+def reset_fina():
+    # password
+    # confirm_password
+    pass

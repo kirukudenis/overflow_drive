@@ -1,6 +1,5 @@
-from overflow import ma, db, migrate
-import secrets
-import random
+from overflow import ma, db
+from datetime import datetime
 
 
 class User(db.Model):
@@ -25,4 +24,21 @@ class User(db.Model):
 
 class UserSchema(ma.Schema):
     class Meta:
-        fields = ("firtsname", "lastname", "email", "phone", "type", "password")
+        fields = ("id","firtsname", "lastname", "email", "phone", "type", "password")
+
+
+class PasswordToken(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.ForeignKey("user.id"), nullable=False)
+    token = db.Column(db.String(length=250), nullable=False)
+    active = db.Column(db.Boolean, nullable=False, default=True)
+    date_added = db.Column(db.DateTime, default=datetime.now)
+
+    def __init__(self, user, token):
+        self.user_id = user
+        self.token = token
+
+
+class PasswordTokenSchema(ma.Schema):
+    class Meta:
+        fields = ("id", "user", "token", "active", "date_added")

@@ -1,10 +1,11 @@
-from overflow.models.vehicle import (VehicleSchema, FleetSchema, RouteSchema, StageSchema, DestinationDepartureSchema)
-from overflow.models.user import (UserSchema)
+from overflow.models.car import (CarSchema, FleetSchema,
+                                 RouteSchema, StageSchema, DestinationDepartureSchema)
+from overflow.models.user import (UserSchema, PasswordTokenSchema)
 
 # schemas
 # car
-car_schema = VehicleSchema()
-cars_schema = VehicleSchema(many=True)
+car_schema = CarSchema()
+cars_schema = CarSchema(many=True)
 
 # fleet schema
 fleet_schema = FleetSchema()
@@ -26,4 +27,6 @@ users_schema = UserSchema(many=True)
 destination_departure_schema = DestinationDepartureSchema()
 destination_departures_schema = DestinationDepartureSchema(many=True)
 
-
+# token schema
+password_reset = PasswordTokenSchema()
+passwords_reset = PasswordTokenSchema(many=True)

@@ -1,6 +1,4 @@
-from overflow import ma, db, migrate
-import secrets
-from .user import User
+from overflow import ma, db
 
 
 class Route(db.Model):
@@ -22,7 +20,7 @@ class RouteSchema(ma.Schema):
         fields = ("id", "name", "departure", "destination", "fare")
 
 
-class Vehicle(db.Model):
+class Car(db.Model):
     id = db.Column(db.Integer, primary_key=True, nullable=False)
     plate_number = db.Column(db.String(100), nullable=False, unique=True)
     fleet_id = db.Column(db.ForeignKey("fleet.id"), nullable=True)
@@ -38,7 +36,7 @@ class Vehicle(db.Model):
         self.route = route
 
 
-class VehicleSchema(ma.Schema):
+class CarSchema(ma.Schema):
     class Meta:
         fields = ("id", "platenumber", "fleet_id", "active", "in_service")
 

@@ -47,4 +47,4 @@ def check_if_token_in_blacklist(decrypted_token):
 
 
 from overflow.routes import user, vehicle
-from overflow.models import user, vehicle, payment
+from overflow.models import user, car, payment

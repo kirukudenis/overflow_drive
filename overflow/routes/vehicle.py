@@ -19,7 +19,6 @@ def add_car():
         active = get("active")
         owner = get("owner")
         route = get("route")
-
         if user_exists(owner):
             try:
                 final = add_vehicle(plate_number, active, owner,route)
