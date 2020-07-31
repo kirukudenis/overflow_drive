@@ -13,6 +13,8 @@ from email import encoders
 from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+import qrcode
+from ..others.body import reset_body
 
 def signup(firstname, lastname, email, phone, type, password):
     if verify_phone(phone):
@@ -126,7 +128,7 @@ def generate_user_token(param):
 def get_token(param):
     user = user_exists(param)
     if user:
-        lookup = PasswordToken.query.filter_by(user_id = user["id"]).first()
+        lookup = PasswordToken.query.filter_by(user_id = user["id"]).filter_by(active=True).first()
         return password_reset.dump(lookup)
     else:
         exc("Error! User Does Not Exist")
@@ -135,7 +137,7 @@ def get_token(param):
 def send_code(code,email) -> str:
     user = user_exists(param)
     if user:
-        return send_email(email,code)
+        return send_email(email,"Password Reset Request. Code.",reset_body(user["firstname"],get_token(user["id"])))
     else:
         exc(("Error! User Does Not  Exist"))
 
@@ -206,3 +208,11 @@ def send_email_with_attachment(subject,from_,to_,body_,attachment_,bcc=""):
     with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
         server.login(sender_email, password)
         return server.sendmail(sender_email, receiver_email, text)
+
+
+def pay(user,route,car):
+    pass
+
+def qr(info):
+    qrcode.make(info)
+    return qrcode.save(f"{os.getcwd()}/overflow/statics/qr/{info}.png")

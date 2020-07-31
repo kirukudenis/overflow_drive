@@ -2,7 +2,7 @@ from flask import jsonify
 from flask_jwt_extended import create_access_token
 
 from overflow import app
-from ..others.user import signup, login, generate_user_token,get_token,send_code
+from ..others.user import signup, login, generate_user_token, get_token, send_code
 from ..others.utils import get, response
 
 
@@ -46,7 +46,7 @@ def reset_password():
         user = get("param")
         return generate_user_token(user)
     except Exception as e:
-        return response(e,500)
+        return response(e, 500)
 
 
 @app.route("/user/password/reset/confirm", methods=["POST"])
@@ -57,7 +57,7 @@ def reset_token():
         lookup = get_token(param)
         return jsonify(lookup)
     except Exception as e:
-        return response(e,500)
+        return response(e, 500)
 
 
 @app.route('/user/password/resend/code', methods=["POST"])
@@ -67,11 +67,11 @@ def resend_code():
         param = get("param")
         lookup = get_token(param)
         if lookup:
-            return send_code(lookup["code"],lookup["email"])
+            return send_code(lookup["code"], lookup["email"])
         else:
-            return response("Error! Code Does Not exist",404)
+            return response("Error! Code Does Not exist", 404)
     except Exception as e:
-        return response(e,500)
+        return response(e, 500)
     # check if code is in db for the suer sthat is not used
     pass
 
