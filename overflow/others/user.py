@@ -223,10 +223,13 @@ def pay(user,route,car):
         exc("Error! User Does Not Exist.")
 
 
-def verify_payment():
+def verify_payment(token):
     # get session
-    #
+    # get data
+    # return payment details
+    # append payment status
     pass
+
 
 
 def record_payment():

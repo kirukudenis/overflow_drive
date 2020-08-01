@@ -84,3 +84,10 @@ def reset_final():
     # password
     # confirm_password
     pass
+
+
+@app.route("/user/pay/fare",methods=["POST"])
+def pay_fare():
+    pass
+
+

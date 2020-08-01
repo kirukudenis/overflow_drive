@@ -59,6 +59,8 @@ def stk_push(amount, phonenumber):
 
     response = requests.post(api_url, json=req, headers=headers)
     logging.info("response", response)
+
+    # TODO : return token to user session["transaction_token"] = secrets.token_urlsafe(48)
     return response
 
 

@@ -4,6 +4,7 @@ from flask import jsonify, request
 
 from overflow import app,db
 from overflow.models.payment import PaymentDump
+from overflow.others.schema import payment_schema
 # TODO : add esocte support for the app {on successful copy}
 
 
@@ -18,6 +19,7 @@ def listenb2c():
         lookup = PaymentDump(decoded)
         db.session.add(lookup)
         db.session.commit()
+        payment_schema.dump(lookup)
     else:
         pass
         # TODO : add logging reason why we could not add payments to the datbase
