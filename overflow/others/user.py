@@ -1,4 +1,5 @@
 from overflow.models.user import User,PasswordToken
+from overflow.models.payment import Mpesa
 from werkzeug.security import generate_password_hash, check_password_hash
 import re
 from overflow import db
@@ -7,7 +8,7 @@ import secrets
 import random
 import os
 from ..others.utils import message,error,success,exc
-from ..others.schema import (user_schema,users_schema,password_reset)
+from ..others.schema import (user_schema,users_schema,password_reset,mpesa_schema,mpesas_schema)
 import email, smtplib, ssl
 from email import encoders
 from email.mime.base import MIMEBase
@@ -211,8 +212,16 @@ def send_email_with_attachment(subject,from_,to_,body_,attachment_,bcc=""):
 
 
 def pay(user,route,car):
-    pass
+    user = user_exists(user)
+    if user:
+        # we are going
+        pass
+    else:
+        exc("Error! User Does Not Exist.")
+
 
 def qr(info):
     qrcode.make(info)
     return qrcode.save(f"{os.getcwd()}/overflow/statics/qr/{info}.png")
+
+
