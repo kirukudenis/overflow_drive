@@ -1,7 +1,7 @@
 from overflow.models.car import (CarSchema, FleetSchema,
                                  RouteSchema, StageSchema, DestinationDepartureSchema)
 from overflow.models.user import (UserSchema, PasswordTokenSchema)
-from overflow.models.payment import (MpesaSchema)
+from overflow.models.payment import (MpesaSchema,PaymentDumpSchema)
 
 # schemas
 # car
@@ -35,3 +35,8 @@ passwords_reset = PasswordTokenSchema(many=True)
 # mpesa
 mpesa_schema = MpesaSchema()
 mpesas_schema = MpesaSchema(many=True)
+
+
+# payment
+payment_schema = PaymentDumpSchema()
+payments_schema = PaymentDumpSchema(many=True)

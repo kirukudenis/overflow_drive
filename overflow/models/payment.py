@@ -35,7 +35,7 @@ class PaymentDump(db.Model):
     data = db.Column(db.Text, nullable=False)
     date_added = db.Column(db.DateTime, default=datetime.now)
 
-    def __init_(self, data):
+    def __init__(self, data):
         self.data = data
 
 

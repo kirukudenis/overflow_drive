@@ -8,7 +8,7 @@ import secrets
 import random
 import os
 from ..others.utils import message,error,success,exc
-from ..others.schema import (user_schema,users_schema,password_reset,mpesa_schema,mpesas_schema)
+from ..others.schema import (user_schema,users_schema,password_reset,mpesa_schema,mpesas_schema,payment_schema)
 import email, smtplib, ssl
 from email import encoders
 from email.mime.base import MIMEBase
@@ -219,6 +219,9 @@ def pay(user,route,car):
     else:
         exc("Error! User Does Not Exist.")
 
+
+def record_payment():
+    pass
 
 def qr(info):
     qrcode.make(info)

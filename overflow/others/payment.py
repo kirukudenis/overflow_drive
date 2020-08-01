@@ -3,15 +3,10 @@ from requests.auth import HTTPBasicAuth
 from base64 import b64encode
 from datetime import datetime
 import logging
-
-# # eriko
-# consumer_key = "qq4lh4XeRQDGKVnvJS4OyGYL2xFtJT2s"
-# consumer_secret = "GdWPdMXMWKVMu7Xm"
-
+import os
 # denis
-consumer_key = "vK3FkmwDOHAcX8UPt1Ek0njU9iE5plHG"
-consumer_secret = "vqB3jnDyqP1umewH"
-
+consumer_key = os.getenv("CONSUMER_KEY")
+consumer_secret = os.getenv("CONSUMER_SECRET")
 
 def authenticate():
     """

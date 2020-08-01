@@ -1,4 +1,4 @@
-from flask import jsonify
+from flask import jsonify,session
 from flask_jwt_extended import create_access_token
 
 from overflow import app
@@ -8,6 +8,8 @@ from ..others.utils import get, response
 
 @app.route('/user/login', methods=["POST"])
 def user_login_():
+    # set some sesson variable
+    session["username"] = "denis"
     try:
         # global param,password
         param = get("email_or_username")
@@ -28,6 +30,7 @@ def user_login_():
 
 @app.route("/user/signup", methods=["POST"])
 def signup_():
+    print(session.get("username"))
     try:
         firstname = get("firstname")
         lastname = get("lastname")
