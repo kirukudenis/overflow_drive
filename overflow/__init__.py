@@ -60,7 +60,7 @@ db = SQLAlchemy(app)
 # flask migrate
 migrate = Migrate(app, db)
 
-#for blacklist tokens
+# for blacklist tokens
 blacklist = set()
 
 

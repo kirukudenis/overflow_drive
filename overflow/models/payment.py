@@ -13,10 +13,9 @@ class Mpesa(db.Model):
     result_code = db.Column(db.Integer, nullable=False)
     result_desc = db.Column(db.Text, nullable=True)
     date_added = db.Column(db.DateTime(), default=datetime.now)
-    local_transactional_key = db.Column(db.String(255), nullable=False)
     user = db.Column(db.ForeignKey("user.id"), nullable=False)
 
-    def __init__(self, merchantRequestID, checkoutRequestID, resultCode, resultDesc, user):
+    def __init__(self,merchantRequestID, checkoutRequestID,resultCode, resultDesc,user):
         self.merchant_request_id = merchantRequestID
         self.checkout_request_id = checkoutRequestID
         self.result_code = resultCode
@@ -32,13 +31,17 @@ class MpesaSchema(ma.Schema):
 
 class PaymentDump(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    data = db.Column(db.Text, nullable=False)
+    data = db.Column(db.Text, nullable=True)
+    user = db.Column(db.ForeignKey("user.id"),nullable=False)
+    token = db.Column(db.String(length=255),nullable=False)
     date_added = db.Column(db.DateTime, default=datetime.now)
 
-    def __init__(self, data):
+    def __init__(self, data,user,token):
         self.data = data
+        self.user = user
+        self.token = token
 
 
 class PaymentDumpSchema(ma.Schema):
     class Meta:
-        fields = ("id", "data", "date_added")
+        fields = ("id", "data","user","token","date_added")

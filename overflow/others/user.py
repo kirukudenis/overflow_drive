@@ -15,7 +15,9 @@ from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import qrcode
-from ..others.body import reset_body
+from overflow.others.body import reset_body
+from overflow.others.payment import stk_push
+from overflow.others.vehicle import get_fare
 
 def signup(firstname, lastname, email, phone, type, password):
     if verify_phone(phone):
@@ -84,7 +86,8 @@ def validate_email(email):
 
 def verify_phone(number):
     regex = re.compile(r'^[+]*[(]?[0-9]{1,4}[)]?[-\s\./0-9]*$', re.IGNORECASE)
-    return re.match(regex, number)
+    final = re.match(regex, number)
+    return final
 
 
 def random_four():
@@ -215,16 +218,24 @@ def pay(user,route,car):
     user = user_exists(user)
     if user:
         # we are going
-        pass
+        return stk_push(get_fare(route),user['phone'])
     else:
         exc("Error! User Does Not Exist.")
+
+
+def verify_payment():
+    # get session
+    #
+    pass
 
 
 def record_payment():
     pass
 
+
 def qr(info):
     qrcode.make(info)
     return qrcode.save(f"{os.getcwd()}/overflow/statics/qr/{info}.png")
+
 
 

@@ -1,13 +1,13 @@
 from flask_sqlalchemy import sqlalchemy
 
 from overflow import db
+from overflow.others.utils import exc
 from overflow.models.user import User
 from overflow.models.car import Fleet, Car, Route, Stage, DestinationDeparture
-from overflow.others.user import user_schema, validate_email
-from .schema import (car_schema, cars_schema, route_schema, stage_schema, stages_schema,
-                     fleet_schema, destination_departure_schema)
-from .user import user_exists
-from .utils import exc
+from overflow.others.schema import (car_schema, cars_schema, route_schema, stage_schema, stages_schema,fleet_schema,destination_departure_schema)
+from overflow.others.user import user_exists,user_schema, validate_email
+
+
 
 
 # functions
@@ -163,8 +163,8 @@ def edit_stage(name, route):
         exc("Error! Stage Does not exist")
 
 
-def route_exists(name):
-    lookup = Route.query.filter_by(name=name).first()
+def route_exists(param):
+    lookup = Route.query.filter_by(name=param).first() or Route.query.get()
     return route_schema.dump(lookup)
 
 
@@ -232,7 +232,7 @@ def is_car_infleet(param):
         route = car_data["route"]
         # getting the fleet b this name
         fleet_lookup = Fleet.query.filter_by(route=route).first()
-        return fleet_schema.dump(is_car_infleet())
+        return fleet_schema.dump(fleet_lookup)
     else:
         exc("Error!, Car Does Not Exist.")
 
@@ -301,3 +301,15 @@ def remove_car_fleet(car_id, fleet):
             exc("Error! Car Does Not Exist.")
     else:
         exc("Error! Fleet Does Not Exists")
+
+
+def get_fare(route):
+    data = route_exists(route)
+    if data:
+        fare = data["fare"]
+        if int(fare) <= 0:
+            exc("Error! Fare Not set")
+        else:
+            return {"fare": fare}
+    else:
+        exc("Error,Route Does Not Exist.")

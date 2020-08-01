@@ -2,8 +2,8 @@ from flask import jsonify,session
 from flask_jwt_extended import create_access_token
 
 from overflow import app
-from ..others.user import signup, login, generate_user_token, get_token, send_code
-from ..others.utils import get, response
+from overflow.others.user import signup, login, generate_user_token, get_token, send_code
+from overflow.others.utils import get, response
 
 
 @app.route('/user/login', methods=["POST"])
@@ -80,7 +80,7 @@ def resend_code():
 
 
 @app.route("/user/password/reset", methods=["POST"])
-def reset_fina():
+def reset_final():
     # password
     # confirm_password
     pass
