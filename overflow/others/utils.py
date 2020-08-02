@@ -1,5 +1,5 @@
 from flask import request, jsonify
-import json
+import json, secrets
 
 
 def get(key):
@@ -30,6 +30,9 @@ def success(msg):
 def response(msg, code):
     string = "{" + f'"response": "{str(msg)}"' + "}"
     d = json.loads(string.replace("'", "\""))
-    return jsonify(d), 500
+    return jsonify(d), code
 
+
+def route_token():
+    return str(secrets.token_hex(3)).upper()
 

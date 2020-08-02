@@ -247,15 +247,12 @@ def payment_successfull(token):
         else :
             return False
 
-
-
 def record_payment():
     pass
 
 
 def qr(info):
     return qrcode.make(info).save(f"{os.getcwd()}/overflow/qr/{info}.png")
-
 
 
 def get_payment_by_token(token):
@@ -277,7 +274,7 @@ def seed_qr(nmb: int) -> bool:
     for i in range(0, nmb):
         tkn = secrets.token_urlsafe(7)
         token_ = token(tkn)
-        print(token_)
         qr(token_)
     return True
+
 

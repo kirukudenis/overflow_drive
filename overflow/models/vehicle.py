@@ -1,4 +1,5 @@
 from overflow import ma, db
+from overflow.others.utils import route_token
 
 
 class Route(db.Model):
@@ -56,10 +57,12 @@ class FleetSchema(ma.Schema):
         fields = ("name", "route")
 
 
+
 class Stage(db.Model):
     id = db.Column(db.Integer, primary_key=True, nullable=False)
     name = db.Column(db.String(length=255), nullable=False, unique=True)
     route = db.Column(db.ForeignKey("route.id"), nullable=False)
+    code = db.Column(db.String(length=50), default=route_token)
 
     def __init__(self, name, route):
         self.name = name

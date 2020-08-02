@@ -1,5 +1,5 @@
-from overflow.models.car import (CarSchema, FleetSchema,
-                                 RouteSchema, StageSchema, DestinationDepartureSchema)
+from overflow.models.vehicle import (CarSchema, FleetSchema,
+                                     RouteSchema, StageSchema, DestinationDepartureSchema)
 from overflow.models.user import (UserSchema, PasswordTokenSchema)
 from overflow.models.payment import (MpesaSchema,PaymentDumpSchema)
 

@@ -3,7 +3,7 @@ from flask_sqlalchemy import sqlalchemy
 from overflow import db
 from overflow.others.utils import exc
 from overflow.models.user import User
-from overflow.models.car import Fleet, Car, Route, Stage, DestinationDeparture
+from overflow.models.vehicle import Fleet, Car, Route, Stage, DestinationDeparture
 from overflow.others.schema import (car_schema, cars_schema, route_schema, stage_schema, stages_schema, fleet_schema,
                                     destination_departure_schema)
 from overflow.others.user import user_exist, user_schema, validate_email

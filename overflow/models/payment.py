@@ -14,6 +14,7 @@ class Mpesa(db.Model):
     result_desc = db.Column(db.Text, nullable=True)
     date_added = db.Column(db.DateTime(), default=datetime.now)
     user = db.Column(db.ForeignKey("user.id"), nullable=False)
+    qr = db.Column(db.String(length=50), default="500.QREr.ror")
 
     def __init__(self,merchantRequestID, checkoutRequestID,resultCode, resultDesc,user):
         self.merchant_request_id = merchantRequestID
