@@ -1,5 +1,5 @@
 from overflow.models.user import User,PasswordToken
-from overflow.models.payment import Mpesa
+from overflow.models.payment import Mpesa,PaymentDump
 from werkzeug.security import generate_password_hash, check_password_hash
 import re
 from overflow import db
@@ -15,9 +15,12 @@ from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import qrcode
+# from overflow.others.vehicle import add_car_fleet
 from overflow.others.body import reset_body
 from overflow.others.payment import stk_push
-from overflow.others.vehicle import get_fare
+from types import SimpleNamespace
+
+
 
 def signup(firstname, lastname, email, phone, type, password):
     if verify_phone(phone):
@@ -72,7 +75,7 @@ def login(param, password):
     return final
 
 
-def user_exists(param):
+def user_exist(param):
     lookup = User.query.filter_by(email=param).first() or User.query.get(param)
     final = user_schema.dump(lookup)
     return final
@@ -111,7 +114,7 @@ def phone_exists(phone):
 
 
 def generate_user_token(param):
-    user = user_exists(param)
+    user = user_exist(param)
     if user:
         existing = PasswordToken.query.filter_by(user_id=user["id"]).first()
         if not existing :
@@ -130,7 +133,7 @@ def generate_user_token(param):
 
 
 def get_token(param):
-    user = user_exists(param)
+    user = user_exist(param)
     if user:
         lookup = PasswordToken.query.filter_by(user_id = user["id"]).filter_by(active=True).first()
         return password_reset.dump(lookup)
@@ -139,7 +142,7 @@ def get_token(param):
 
 
 def send_code(code,email) -> str:
-    user = user_exists(param)
+    user = user_exist(param)
     if user:
         return send_email(email,"Password Reset Request. Code.",reset_body(user["firstname"],get_token(user["id"])))
     else:
@@ -199,7 +202,6 @@ def send_email_with_attachment(subject,from_,to_,body_,attachment_,bcc=""):
                 "Content-Disposition",
                 f"attachment; filename= {filename}",
             )
-
             # Add attachment to message and convert message to string
             message.attach(part)
             text = message.as_string()
@@ -215,20 +217,35 @@ def send_email_with_attachment(subject,from_,to_,body_,attachment_,bcc=""):
 
 
 def pay(user,route,car):
-    user = user_exists(user)
+    user = user_exist(user)
     if user:
         # we are going
-        return stk_push(get_fare(route),user['phone'])
+        return stk_push(route,user['phone'])
     else:
         exc("Error! User Does Not Exist.")
 
 
-def verify_payment(token):
-    # get session
-    # get data
-    # return payment details
-    # append payment status
-    pass
+def payment_info(token):
+    payment_data = payment_successfull(token)
+    data = get_payment_by_token(token)
+    if payment_data:
+        ddata = dotify(data)
+        # we are also going to generate qr
+        qr = qr(ddata.token)
+        data.update({"status": "Successfully Paid.","token" : f"http://localhost:8000/qr/{token}.png"})
+
+    else:
+        data.update({"status": "Payment Not Successful."})
+    return data
+
+def payment_successfull(token):
+    data = get_payment_by_token(token)
+    if data:
+        data_ = dotify(data)
+        if data_.ResultCode == 0:
+            return True
+        else :
+            return False
 
 
 
@@ -237,8 +254,30 @@ def record_payment():
 
 
 def qr(info):
-    qrcode.make(info)
-    return qrcode.save(f"{os.getcwd()}/overflow/statics/qr/{info}.png")
+    return qrcode.make(info).save(f"{os.getcwd()}/overflow/qr/{info}.png")
 
 
+
+def get_payment_by_token(token):
+    lookup = PaymentDump.query.filter_by(token=token).first()
+    return payment_schema.dump(lookup)
+
+
+def dotify(dict):
+    return SimpleNamespace(**dict)
+
+
+def token(tkn) -> str:
+    dashmap = (3,4,3)
+    tk = re.findall(''.join('(\S{{{}}})'.format(l) for l in dashmap), tkn)
+    return f"{tk[0][0]}•{tk[0][1]}•{tk[0][2]}"
+
+
+def seed_qr(nmb: int) -> bool:
+    for i in range(0, nmb):
+        tkn = secrets.token_urlsafe(7)
+        token_ = token(tkn)
+        print(token_)
+        qr(token_)
+    return True
 

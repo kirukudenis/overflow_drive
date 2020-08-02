@@ -4,6 +4,7 @@ from flask_jwt_extended import create_access_token
 from overflow import app
 from overflow.others.user import signup, login, generate_user_token, get_token, send_code
 from overflow.others.utils import get, response
+from overflow.others.vehicle import  get_fare
 
 
 @app.route('/user/login', methods=["POST"])
@@ -88,6 +89,8 @@ def reset_final():
 
 @app.route("/user/pay/fare",methods=["POST"])
 def pay_fare():
+
+
     pass
 
 

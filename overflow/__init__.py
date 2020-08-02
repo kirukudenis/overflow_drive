@@ -10,10 +10,10 @@ from datetime import timedelta, datetime
 # import flask
 # loading the dot env module
 from dotenv import load_dotenv
+
 path = f"{os.getcwd()}/.env"
 # setting the enviroment variables
 load_dotenv(dotenv_path=path)
-
 
 db_pass = os.getenv('DBPASS')
 
@@ -47,7 +47,6 @@ app.config["SECRET_KEY"] = "denis"
 # setting the key for JWT
 app.config["JWT_SECRET_KEY"] = secrets.token_hex(16)
 
-
 # setting JWT expiry time
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=5)
 
@@ -70,5 +69,5 @@ def check_if_token_in_blacklist(decrypted_token):
     return jti in blacklist
 
 
-from overflow.routes import user, vehicle
+from overflow.routes import vehicle, callback, user
 from overflow.models import user, car, payment

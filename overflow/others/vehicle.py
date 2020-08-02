@@ -4,16 +4,15 @@ from overflow import db
 from overflow.others.utils import exc
 from overflow.models.user import User
 from overflow.models.car import Fleet, Car, Route, Stage, DestinationDeparture
-from overflow.others.schema import (car_schema, cars_schema, route_schema, stage_schema, stages_schema,fleet_schema,destination_departure_schema)
-from overflow.others.user import user_exists,user_schema, validate_email
-
-
+from overflow.others.schema import (car_schema, cars_schema, route_schema, stage_schema, stages_schema, fleet_schema,
+                                    destination_departure_schema)
+from overflow.others.user import user_exist, user_schema, validate_email
 
 
 # functions
 def add_vehicle(plate_number, active, owner, route):
     if not car_exists(plate_number):
-        if user_exists(owner):
+        if user_exist(owner):
             try:
                 lookup = Car(plate_number, bool(active), owner, route)
                 db.session.add(lookup)
@@ -48,7 +47,7 @@ def edit_owner_email(user_id, email):
 
 def edit_vehicle_route(param, route):
     if car_exists(param):
-        if user_exists(param):
+        if user_exist(param):
             if route_exists(route):
                 # we have a car else
                 lookup = Car.query.filter_by(plate_number=param).first() or Car.query.get(param)
@@ -66,7 +65,7 @@ def edit_vehicle_route(param, route):
 
 def edit_vehicle_owner(param, owner):
     if car_exists(param):
-        if user_exists(owner):
+        if user_exist(owner):
             # we have a car else
             lookup = Car.query.filter_by(plate_number=param).first() or Car.query.get(param)
             lookup.owner = owner

@@ -3,7 +3,7 @@ from flask import jsonify, request
 from flask_jwt_extended import jwt_required, create_access_token, get_jwt_identity
 
 # get additional functions
-from overflow.others.user import user_exists
+from overflow.others.user import user_exist
 from overflow.others.utils import get,response
 from overflow.others.vehicle import (add_route, edit_fare, add_vehicle, add_stage, edit_stage, get_single_vehicle,
                                      get_all_vehicles, get_routes_by_route, get_single_stage, get_all_stages,
@@ -19,7 +19,7 @@ def add_car():
         active = get("active")
         owner = get("owner")
         route = get("route")
-        if user_exists(owner):
+        if user_exist(owner):
             try:
                 final = add_vehicle(plate_number, active, owner,route)
                 return final
@@ -36,7 +36,7 @@ def edit_car():
     try:
         plate_number = get("plate_number")
         owner = get("owner")
-        if user_exists(owner):
+        if user_exist(owner):
             try:
                 final = add_vehicle(plate_number, active, owner, route)
                 return final
