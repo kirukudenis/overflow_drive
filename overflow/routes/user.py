@@ -9,7 +9,7 @@ from overflow.others.vehicle import  get_fare
 
 @app.route('/user/login', methods=["POST"])
 def user_login_():
-    # set some sesson variable
+    # set some session variable
     session["username"] = "denis"
     try:
         # global param,password
