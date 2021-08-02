@@ -28,7 +28,7 @@ app = Flask(__name__)
 jwt = JWTManager(app)
 
 # setting sql_alchemy database consts
-app.config["SQLALCHEMY_DATABASE_URI"] = f"mysql+mysqlconnector://root:{db_pass}@localhost:3306/overflow"
+app.config["SQLALCHEMY_DATABASE_URI"] = f"mysql+mysqlconnector://root:@localhost:3306/drive"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SECRET_KEY"] = "denis"
 

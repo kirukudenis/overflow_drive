@@ -142,7 +142,7 @@ def get_token(param):
 
 
 def send_code(code,email) -> str:
-    user = user_exist(param)
+    user = user_exist(email)
     if user:
         return send_email(email,"Password Reset Request. Code.",reset_body(user["firstname"],get_token(user["id"])))
     else:
